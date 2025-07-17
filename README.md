@@ -95,7 +95,7 @@ espetos-llm-bot/
 ├── README.md           # This file
 ├── agent/              # AI agent logic and behaviors
 ├── data_ingest/        # Data processing and ingestion
-├── messanger/          # Message handling and communication
+├── messenger/          # Message handling and communication
 └── oracle/             # Core API and AI orchestration
     ├── __init__.py
     └── main.py         # FastAPI application
