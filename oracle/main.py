@@ -29,4 +29,7 @@ async def shutdown_event(app: FastAPI) -> None:
 
 @app.get("/")
 async def read_root(request: Request):
-    return {"message": "Welcome to the Oracle API", "resource": request.app.state.some_resource}
+    return {
+        "message": "Welcome to the Oracle API",
+        "resource": request.app.state.some_resource
+    }
