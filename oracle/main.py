@@ -1,4 +1,5 @@
 import os
+from utils.logger import log_message
 from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.concurrency import asynccontextmanager
 
@@ -16,13 +17,13 @@ app = FastAPI(lifespan=lifespan)
 
 async def startup_event(app: FastAPI) -> None:
     # Perform startup tasks here, like loading models or initializing services
-    print("---> Application is starting up...")
+    log_message("Application is starting up...", "INFO")
     app.state.some_resource = "Resource Initialized"
 
 
 async def shutdown_event(app: FastAPI) -> None:
     # Perform shutdown tasks here, like closing connections or saving state
-    print("---> Application is shutting down...")
+    log_message("Application is shutting down...", "INFO")
     app.state.some_resource = None
 
 
