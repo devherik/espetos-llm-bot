@@ -10,4 +10,6 @@ dependencies = [
     "fastapi[standard]>=0.116.1",
     "google-genai>=1.26.0",
     "uvicorn>=0.35.0",
+    "sqlalchemy>=2.0.0",
+    "mariadb>=1.1.0",
 ]

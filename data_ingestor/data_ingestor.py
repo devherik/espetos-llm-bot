@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class DataIngest(ABC):
+class DataIngestorInterface(ABC):
     
     @abstractmethod
     async def initialize(self) -> None:

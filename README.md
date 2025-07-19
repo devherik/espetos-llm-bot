@@ -18,15 +18,40 @@ A sophisticated LLM-powered chatbot built with FastAPI, Google Gemini AI, and Ch
 - **Framework**: FastAPI
 - **AI Model**: Google Gemini AI
 - **Vector Database**: ChromaDB
+- **SQL Database**: MariaDB with SQLAlchemy ORM
 - **Language**: Python 3.12+
 - **Package Manager**: UV
-- **Additional Libraries**: Agno, Pydantic, Uvicorn
+- **Additional Libraries**: Agno, Pydantic, Uvicorn, MariaDB Connector
 
 ## 📋 Prerequisites
 
 - Python 3.12 or higher
 - UV package manager (recommended) or pip
 - Google Gemini API key
+- MariaDB server (for data ingestion)
+- MariaDB Connector/C development libraries
+
+### System Dependencies
+
+Install the required system dependencies:
+
+**Ubuntu/Debian:**
+```bash
+sudo apt update
+sudo apt install -y libmariadb-dev pkg-config
+```
+
+**CentOS/RHEL/Fedora:**
+```bash
+sudo yum install mariadb-devel pkgconfig
+# or for newer versions
+sudo dnf install mariadb-devel pkgconfig
+```
+
+**macOS:**
+```bash
+brew install mariadb-connector-c pkg-config
+```
 
 ## 🔧 Installation
 
