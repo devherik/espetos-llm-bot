@@ -22,15 +22,15 @@ class DataIngestor(DataIngestorInterface):
         try:
             self._database = ChromaDb(
                 collection="document_collection",
-                persist_directory="my_chroma_db",
-                embedder=GeminiEmbedder(),
+                path="my_chroma_db",
+                persistent_client=True,
+                embedder=GeminiEmbedder(api_key="AIzaSyDftb9Kc-hrQ3LmkdrxRucnRsGlNdQXd_Y"),
             )
             documents = await self._load_data()
             await self._process_data(documents)
         except Exception as e:
             log_message(f"Error initializing ChromaDB client: {e}", "ERROR")
             return
-            
 
     async def _load_data(self) -> List[Document]:
         """Load documents from MariaDB database."""
@@ -41,12 +41,13 @@ class DataIngestor(DataIngestorInterface):
             with engine.connect() as conn:
                 result = conn.execute(text("SELECT * FROM Documents"))
                 rows = result.fetchall()
-                
+
                 for row in rows:
                     # Assuming the documents table has columns like: id, title, content, metadata
                     # Adjust these column names based on your actual database schema
                     document = Document(
-                        content=row[2] if len(row) > 2 else str(row),  # Assuming content is 3rd column
+                        content=row[2] if len(row) > 2 else str(
+                            row),  # Assuming content is 3rd column
                         id=str(row[0]) if len(row) > 0 else None,
                         name=row[1] if len(row) > 1 else None,
                         meta_data={
@@ -55,10 +56,11 @@ class DataIngestor(DataIngestorInterface):
                         }
                     )
                     documents.append(document)
-                
-                log_message(f"{len(documents)} documents loaded from database", "INFO")
+
+                log_message(
+                    f"{len(documents)} documents loaded from database", "INFO")
                 return documents
-                
+
         except Exception as e:
             log_message(f"Error loading data from database: {e}", "ERROR")
             return []
@@ -69,16 +71,23 @@ class DataIngestor(DataIngestorInterface):
             if not documents:
                 log_message("No documents to process", "WARNING")
                 return
-            
+
             if self._database is None:
                 log_message("Database not initialized", "ERROR")
                 return
+
+            log_message(f"Processing {len(documents)} documents...", "INFO")
             
-            # Insert documents into ChromaDB
-            self._database.insert(documents)
+            # The 'documents' list already contains the correct Document objects.
+            # No need to create new ones.
+            self.knowledge_base = DocumentKnowledgeBase(
+                vector_db=self._database, documents=documents)
             
-            log_message(f"Processed and stored {len(documents)} documents in ChromaDB", "SUCCESS")
+            # The load method will handle embedding and storing the documents.
+            self.knowledge_base.load(recreate=False)
             
+            log_message(f"Successfully processed and stored {len(documents)} documents.", "SUCCESS")
+
         except Exception as e:
             log_message(f"Error processing documents: {e}", "ERROR")
 
