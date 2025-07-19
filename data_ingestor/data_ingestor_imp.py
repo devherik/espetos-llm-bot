@@ -1,3 +1,4 @@
+import os
 from data_ingestor.data_ingestor import DataIngestorInterface
 from agno.knowledge.document import DocumentKnowledgeBase
 from agno.vectordb.chroma import ChromaDb
@@ -24,7 +25,7 @@ class DataIngestor(DataIngestorInterface):
                 collection="document_collection",
                 path="my_chroma_db",
                 persistent_client=True,
-                embedder=GeminiEmbedder(api_key="AIzaSyDftb9Kc-hrQ3LmkdrxRucnRsGlNdQXd_Y"),
+                embedder=GeminiEmbedder(api_key=os.getenv("GOOGLE_API_KEY", "")),
             )
             documents = await self._load_data()
             await self._process_data(documents)
