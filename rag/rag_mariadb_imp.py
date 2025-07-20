@@ -1,5 +1,5 @@
 import os
-from data_ingestor.data_ingestor import DataIngestorInterface
+from rag.rag import RAGInterface
 from agno.knowledge.document import DocumentKnowledgeBase
 from agno.vectordb.chroma import ChromaDb
 from agno.document.base import Document
@@ -10,9 +10,9 @@ from typing import Optional, List
 from utils.logger import log_message
 
 
-class DataIngestor(DataIngestorInterface):
+class RAGMariaDB(RAGInterface):
     """Singleton class for data ingestion using ChromaDB."""
-    _instance: Optional[DataIngestorInterface] = None
+    _instance: Optional[RAGInterface] = None
     _database = None
     knowledge_base: Optional[DocumentKnowledgeBase] = None
 
