@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
 class DataIngestorInterface(ABC):
+    _instance = None
+    _database = None
+    knowledge_base = None
     
     @abstractmethod
     async def initialize(self) -> None:
