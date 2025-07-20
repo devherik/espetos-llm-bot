@@ -1,3 +1,4 @@
+import os
 from agent.agent import AgentInterface
 from pydantic import SecretStr
 from agno.agent import Agent, RunResponse
@@ -10,6 +11,7 @@ from agno.tools.telegram import TelegramTools
 from typing import Optional
 from utils.logger import log_message
 
+
 class GeminiAgentImp(AgentInterface):
     _instance: Optional[AgentInterface] = None
     _agent = None
@@ -19,11 +21,11 @@ class GeminiAgentImp(AgentInterface):
         if not cls._instance:
             cls._instance = super().__new__(cls)
         return cls._instance
-    
-    
-    async def initialize(self, knowledge_base: DocumentKnowledgeBase) -> None:
+
+    async def initialize(self, key: SecretStr, knowledge_base: DocumentKnowledgeBase) -> None:
         """Initialize the agent."""
         try:
+            api_key_str = key.get_secret_value()
             memory = Memory(
                 db=RedisMemoryDb(
                     prefix="memory",
@@ -31,9 +33,9 @@ class GeminiAgentImp(AgentInterface):
                     port=6379,
                     db=0,
                 ),
-                model=Gemini(id=self.model),
+                model=Gemini(id=self.model, api_key=api_key_str),
             )
-            
+
             storage = RedisStorage(
                 prefix="storage",
                 host="localhost",
@@ -42,9 +44,10 @@ class GeminiAgentImp(AgentInterface):
             )
 
             self._agent = Agent(
-                model=Gemini(id=self.model),
+                model=Gemini(id=self.model, api_key=api_key_str),
                 storage=storage,
                 memory=memory,
+                instructions="Only answer questions based on the provided knowledge base.",
                 enable_agentic_memory=True,
                 add_history_to_messages=True,
                 search_knowledge=True,
@@ -55,15 +58,17 @@ class GeminiAgentImp(AgentInterface):
         except Exception as e:
             log_message(f"Error initializing Gemini agent: {e}", "ERROR")
             raise e
-        
+
     async def get_answer(self, question: str, user_id: str) -> RunResponse:
         """Get an answer to a question."""
         if not self._agent:
-            log_message("Agent not initialized. Please call initialize() first.", "ERROR")
+            log_message(
+                "Agent not initialized. Please call initialize() first.", "ERROR")
             return RunResponse(content="Agent not initialized.")
         try:
             response = self._agent.run(question, user_id=user_id)
             return response
         except Exception as e:
-            log_message(f"Error getting answer from Gemini agent: {e}", "ERROR")
+            log_message(
+                f"Error getting answer from Gemini agent: {e}", "ERROR")
             return RunResponse(content="Sorry, I couldn't get an answer.")
