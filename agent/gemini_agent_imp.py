@@ -1,5 +1,6 @@
 import os
 from agent.agent import AgentInterface
+from agent.instruction_template import agent_instruction_template
 from pydantic import SecretStr
 from agno.agent import Agent, RunResponse
 from agno.models.google import Gemini
@@ -47,7 +48,7 @@ class GeminiAgentImp(AgentInterface):
                 model=Gemini(id=self.model, api_key=api_key_str),
                 storage=storage,
                 memory=memory,
-                instructions="Only answer questions based on the provided knowledge base.",
+                instructions=agent_instruction_template,
                 enable_agentic_memory=True,
                 add_history_to_messages=True,
                 search_knowledge=True,

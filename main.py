@@ -1,6 +1,6 @@
 import asyncio
 import os
-from rag.rag_mariadb_imp import RAGMariaDB
+from rag.rag_imp import RAGImp
 from agent.gemini_agent_imp import GeminiAgentImp
 from pydantic import SecretStr
 from utils.logger import log_message
@@ -10,7 +10,7 @@ env_path = os.path.join(BASE_DIR, '.env')
 key = SecretStr(os.getenv("GOOGLE_API_KEY", ""))
 
 async def main():
-    database = RAGMariaDB()
+    database = RAGImp()
     await database.initialize()
 
     if not database.knowledge_base:

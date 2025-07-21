@@ -10,7 +10,7 @@ from typing import Optional, List
 from utils.logger import log_message
 
 
-class RAGMariaDB(RAGInterface):
+class RAGImp(RAGInterface):
     """Singleton class for data ingestion using ChromaDB."""
     _instance: Optional[RAGInterface] = None
     _database = None
