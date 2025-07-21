@@ -136,6 +136,7 @@ python-dateutil==2.9.0.post0
 python-debian==1.0.1+ubuntu1
 python-dotenv==1.1.1
 python-multipart==0.0.20
+python-telegram-bot==22.3
 python-xlib==0.33
 pyxdg==0.28
 PyYAML==6.0.2
