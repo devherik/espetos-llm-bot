@@ -13,4 +13,5 @@ dependencies = [
     "sqlalchemy>=2.0.0",
     "mariadb>=1.1.0",
     "redis>=6.2.0",
+    "python-telegram-bot>=22.3",
 ]

@@ -5,12 +5,15 @@ from rag.rag_imp import RAGImp
 from agent.gemini_agent_imp import GeminiAgentImp
 from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.concurrency import asynccontextmanager
+from telegram import Update
+from telegram.ext import Application, CommandHandler, ContextTypes
 from pydantic import SecretStr
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(BASE_DIR, '.env')
-key = SecretStr(os.getenv("GOOGLE_API_KEY", ""))
+google_api_key = SecretStr(os.getenv("GOOGLE_API_KEY", ""))
+telegram_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -42,7 +45,7 @@ async def startup_event(app: FastAPI) -> None:
             print("Knowledge base is not initialized. Please check the data ingestion process.")
             return
         agent = GeminiAgentImp()
-        await agent.initialize(key=key, knowledge_base=rag.knowledge_base)
+        await agent.initialize(key=google_api_key, knowledge_base=rag.knowledge_base)
     except Exception as e:
         log_message(f"Error during initialization: {e}", "ERROR")
         return
