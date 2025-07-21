@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class DataIngestorInterface(ABC):
     _instance = None
-    _database = None
+    chroma_db = None
     
     @abstractmethod
     async def initialize(self) -> None:

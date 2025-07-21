@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
+from agno.vectordb.chroma import ChromaDb
 
 class RAGInterface(ABC):
     _instance = None
-    _database = None
+    chroma_db = None
     knowledge_base = None
     
     @abstractmethod
-    async def initialize(self) -> None:
+    async def initialize(self, chroma_db: ChromaDb) -> None:
         """Initialize the data ingestion pipeline."""
         pass
     

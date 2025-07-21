@@ -15,8 +15,12 @@ async def main():
         database = MariaDBDataIngestor()
         await database.initialize()
         
+        if database.chroma_db is None:
+            print("ChromaDB is not initialized. Please check the data ingestion process.")
+            return
+        
         rag = RAGImp()
-        await rag.initialize()
+        await rag.initialize(chroma_db=database.chroma_db)
 
         if not rag.knowledge_base:
             print("Knowledge base is not initialized. Please check the data ingestion process.")

@@ -21,14 +21,9 @@ class RAGImp(RAGInterface):
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    async def initialize(self) -> None:
+    async def initialize(self, chroma_db: ChromaDb) -> None:
         try:
-            self._database = ChromaDb(
-                collection="document_collection",
-                path="my_chroma_db",
-                persistent_client=True,
-                embedder=GeminiEmbedder(api_key=os.getenv("GOOGLE_API_KEY", "")),
-            )
+            self._database = chroma_db
             await self._process_data()
         except Exception as e:
             log_message(f"Error initializing ChromaDB client: {e}", "ERROR")

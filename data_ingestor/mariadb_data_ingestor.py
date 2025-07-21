@@ -13,7 +13,7 @@ from utils.logger import log_message
 class MariaDBDataIngestor(DataIngestorInterface):
     """Singleton class for data ingestion using ChromaDB."""
     _instance: Optional[DataIngestorInterface] = None
-    _database = None
+    chroma_db = None
 
     def __new__(cls):
         if not cls._instance:
@@ -22,7 +22,7 @@ class MariaDBDataIngestor(DataIngestorInterface):
 
     async def initialize(self) -> None:
         try:
-            self._database = ChromaDb(
+            self.chroma_db = ChromaDb(
                 collection="document_collection",
                 path="my_chroma_db",
                 persistent_client=True,
@@ -75,7 +75,7 @@ class MariaDBDataIngestor(DataIngestorInterface):
                 log_message("No documents to process", "WARNING")
                 return
 
-            if self._database is None:
+            if self.chroma_db is None:
                 log_message("Database not initialized", "ERROR")
                 return
 
@@ -84,7 +84,7 @@ class MariaDBDataIngestor(DataIngestorInterface):
             # The 'documents' list already contains the correct Document objects.
             # No need to create new ones.
             knowledge_base = DocumentKnowledgeBase(
-                vector_db=self._database, documents=documents)
+                vector_db=self.chroma_db, documents=documents)
             
             # The load method will handle embedding and storing the documents.
             knowledge_base.load(recreate=False)
@@ -106,9 +106,9 @@ class MariaDBDataIngestor(DataIngestorInterface):
     async def close(self) -> None:
         """Close the knowledge service."""
         try:
-            if self._database is not None:
+            if self.chroma_db is not None:
                 # ChromaDB doesn't require explicit closing, but we can clear the reference
-                self._database = None
+                self.chroma_db = None
                 log_message("Data ingestor closed successfully", "INFO")
         except Exception as e:
             log_message(f"Error closing data ingestor: {e}", "ERROR")
