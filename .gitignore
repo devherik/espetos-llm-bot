@@ -10,3 +10,4 @@ wheels/
 .venv
 .env
 my_chroma_db
+oracle/my_chroma_db/chroma.sqlite3

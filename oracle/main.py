@@ -1,9 +1,16 @@
 import os
 from utils.logger import log_message
 from data_ingestor.mariadb_data_ingestor import MariaDBDataIngestor
+from rag.rag_imp import RAGImp
+from agent.gemini_agent_imp import GeminiAgentImp
 from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.concurrency import asynccontextmanager
+from pydantic import SecretStr
 
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+env_path = os.path.join(BASE_DIR, '.env')
+key = SecretStr(os.getenv("GOOGLE_API_KEY", ""))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,7 +27,25 @@ database = MariaDBDataIngestor()
 async def startup_event(app: FastAPI) -> None:
     # Perform startup tasks here, like loading models or initializing services
     log_message("Application is starting up...", "INFO")
-    await database.initialize()
+    try:
+        database = MariaDBDataIngestor()
+        await database.initialize()
+        
+        if database.chroma_db is None:
+            print("ChromaDB is not initialized. Please check the data ingestion process.")
+            return
+        
+        rag = RAGImp()
+        await rag.initialize(chroma_db=database.chroma_db)
+
+        if not rag.knowledge_base:
+            print("Knowledge base is not initialized. Please check the data ingestion process.")
+            return
+        agent = GeminiAgentImp()
+        await agent.initialize(key=key, knowledge_base=rag.knowledge_base)
+    except Exception as e:
+        log_message(f"Error during initialization: {e}", "ERROR")
+        return
     app.state.some_resource = "Resource Initialized"
 
 
