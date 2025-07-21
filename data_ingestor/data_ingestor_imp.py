@@ -10,11 +10,10 @@ from typing import Optional, List
 from utils.logger import log_message
 
 
-class DataIngestor(DataIngestorInterface):
+class MariaDBDataIngestor(DataIngestorInterface):
     """Singleton class for data ingestion using ChromaDB."""
     _instance: Optional[DataIngestorInterface] = None
     _database = None
-    knowledge_base: Optional[DocumentKnowledgeBase] = None
 
     def __new__(cls):
         if not cls._instance:
@@ -84,11 +83,11 @@ class DataIngestor(DataIngestorInterface):
             
             # The 'documents' list already contains the correct Document objects.
             # No need to create new ones.
-            self.knowledge_base = DocumentKnowledgeBase(
+            knowledge_base = DocumentKnowledgeBase(
                 vector_db=self._database, documents=documents)
             
             # The load method will handle embedding and storing the documents.
-            self.knowledge_base.load(recreate=False)
+            knowledge_base.load(recreate=False)
             
             log_message(f"Successfully processed and stored {len(documents)} documents.", "SUCCESS")
 

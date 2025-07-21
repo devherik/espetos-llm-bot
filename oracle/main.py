@@ -1,6 +1,6 @@
 import os
 from utils.logger import log_message
-from data_ingestor.data_ingestor_imp import DataIngestor
+from data_ingestor.data_ingestor_imp import MariaDBDataIngestor
 from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.concurrency import asynccontextmanager
 
@@ -14,7 +14,7 @@ async def lifespan(app: FastAPI):
     # Clean up resources or connections here if needed
 
 app = FastAPI(lifespan=lifespan)
-database = DataIngestor()
+database = MariaDBDataIngestor()
 
 
 async def startup_event(app: FastAPI) -> None:
