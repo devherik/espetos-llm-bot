@@ -1,6 +1,6 @@
 import asyncio
 import os
-from data_ingestor.data_ingestor_imp import MariaDBDataIngestor
+from data_ingestor.mariadb_data_ingestor import MariaDBDataIngestor
 from rag.rag_imp import RAGImp
 from agent.gemini_agent_imp import GeminiAgentImp
 from pydantic import SecretStr

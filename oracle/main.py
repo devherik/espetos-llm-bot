@@ -1,6 +1,6 @@
 import os
 from utils.logger import log_message
-from data_ingestor.data_ingestor_imp import MariaDBDataIngestor
+from data_ingestor.mariadb_data_ingestor import MariaDBDataIngestor
 from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.concurrency import asynccontextmanager
 
