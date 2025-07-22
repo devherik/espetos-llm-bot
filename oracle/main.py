@@ -46,13 +46,13 @@ async def startup_event(app: FastAPI) -> None:
             conf.get_default().auth_token = ngrok_auth_token
         
         # Open an HTTP tunnel on the default port 8000
-        public_url = ngrok.connect("8000", bind_tls=True)
-        log_message(f"ngrok tunnel opened at: {public_url}", "SUCCESS")
+        ngrok_data = ngrok.connect("8000", bind_tls=True)
+        log_message(f"ngrok tunnel opened at: {ngrok_data}", "SUCCESS")
         
         # Set the Telegram webhook
         telegram_bot = TelegramMessenger()
         telegram_bot.initialize(token=telegram_token)
-        webhook_url = f"{public_url.public_url}/telegram-webhook/{telegram_token}"
+        webhook_url = f"{ngrok_data.public_url}/telegram-webhook/{telegram_token}"
         
         log_message(f"Setting Telegram webhook to: {webhook_url}", "INFO")
         
