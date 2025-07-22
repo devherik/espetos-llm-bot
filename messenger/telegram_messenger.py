@@ -1,9 +1,12 @@
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import Application, CommandHandler, ContextTypes, filters, MessageHandler
+
+from utils.logger import log_message
+
 
 class TelegramMessenger:
     _instance = None
-    _bot = None
+    bot = None
 
     def __new__(cls):
         if not cls._instance:
@@ -11,23 +14,53 @@ class TelegramMessenger:
         return cls._instance
 
     def initialize(self, token: str):
-        self._bot = Application.builder().token(token).build()
-        self._bot.add_handler(CommandHandler("start", self.start))
-        self._bot.add_handler(CommandHandler("help", self.help))
+        try:
+            self.bot = Application.builder().token(token).build()
+            self.bot.add_handler(CommandHandler("start", self.start))
+            self.bot.add_handler(CommandHandler("help", self.help))
+            self.bot.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.echo))
+            # self.bot.run_polling()
+            log_message("Telegram bot initialized successfully", "INFO")
+        except Exception as e:
+            log_message(f"Error initializing Telegram bot: {e}", "ERROR")
+            raise e
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        pass
+        if not update.message:
+            raise ValueError("Update message is None")
+        try:
+            await update.message.reply_text("Welcome to the Espetos LLM Bot! How can I assist you today?")
+        except Exception as e:
+            print(f"Error in start command: {e}")
+            await update.message.reply_text("An error occurred while processing your request. Please try again later.")
+
+    async def echo(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Echo the user message."""
+        if not update.message or not update.message.text:
+            # This path should not be taken due to the MessageHandler filter, but it's a good practice for type safety.
+            return
+        try:
+            await update.message.reply_text(update.message.text)
+        except Exception as e:
+            print(f"Error in echo command: {e}")
+            await update.message.reply_text("An error occurred while processing your request. Please try again later.")
+
+    def run(self):
+        """Run the bot."""
+        if not self.bot:
+            log_message("Bot not initialized. Please call initialize() first.", "ERROR")
+            return
+        try:
+            log_message("Running Telegram bot...", "INFO")
+            self.bot.run_polling()
+        except Exception as e:
+            log_message(f"Error running Telegram bot: {e}", "ERROR")
 
     async def help(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        pass
-    
-    def run(self):
-        if not self._bot:
-            raise ValueError("Bot is not initialized. Please provide a valid token.")
+        if not update.message:
+            raise ValueError("Update message is None")
         try:
-            self._bot.run_polling()
+            await update.message.reply_text("Here are some commands you can use:\n/start - Start the conversation\n/help - Get help")
         except Exception as e:
-            print(f"Error running Telegram bot: {e}")
-            # Handle the error appropriately, e.g., log it or notify the user
-            # For example, you could log it using a logging framework
-            # log_message(f"Error running Telegram bot: {e}", "ERROR")
+            print(f"Error in help command: {e}")
+            await update.message.reply_text("An error occurred while processing your request. Please try again later.")
