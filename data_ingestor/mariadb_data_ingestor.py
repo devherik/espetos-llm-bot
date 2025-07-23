@@ -42,7 +42,7 @@ class MariaDBDataIngestor(DataIngestorInterface):
             engine = create_engine(engine_path)
             # A dataingestor instance will receive a query and search the documents table
             with engine.connect() as conn:
-                result = conn.execute(text("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Documents'"))
+                result = conn.execute(text("SELECT * FROM Produtos"))
                 rows = result.fetchall()
 
                 for row in rows:

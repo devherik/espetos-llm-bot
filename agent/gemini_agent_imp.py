@@ -8,7 +8,6 @@ from agno.memory.v2.db.redis import RedisMemoryDb
 from agno.memory.v2.memory import Memory
 from agno.storage.redis import RedisStorage
 from agno.knowledge.document import DocumentKnowledgeBase
-from agno.tools.telegram import TelegramTools
 from typing import Optional
 from utils.logger import log_message
 
@@ -48,6 +47,7 @@ class GeminiAgentImp(AgentInterface):
                 model=Gemini(id=self.model, api_key=api_key_str),
                 storage=storage,
                 memory=memory,
+                introduction="Olá, seja bem vindo ao Espeto do Vale. Como posso te ajudar hoje?",
                 instructions=agent_instruction_template,
                 enable_agentic_memory=True,
                 add_history_to_messages=True,
