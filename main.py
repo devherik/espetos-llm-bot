@@ -32,8 +32,12 @@ async def main():
         log_message(f"Error during initialization: {e}", "ERROR")
         return
 
-    response = await agent.get_answer("Qual o preço de todos seus produtos?", user_id="12345")
-    print(f"\033[92m{agent.model}: \033[0m{response.content}")
+    while True:
+        user_input = input("Digite sua pergunta (ou 'sair' para encerrar): ")
+        if user_input.lower() == 'sair':
+            break
+        response = await agent.get_answer(user_input, user_id="12345")
+        print(f"\033[92m{agent.model}: \033[0m{response.content}")
 
 if __name__ == "__main__":
     asyncio.run(main())
