@@ -1,6 +1,7 @@
 import asyncio
 import os
 from data_ingestor.mariadb_data_ingestor import MariaDBDataIngestor
+from data_ingestor.notion_data_ingestor import NotionDataIngestor
 from rag.rag_imp import RAGImp
 from agent.gemini_agent_imp import GeminiAgentImp
 from pydantic import SecretStr
@@ -12,7 +13,7 @@ key = SecretStr(os.getenv("GOOGLE_API_KEY", ""))
 
 async def main():
     try:
-        database = MariaDBDataIngestor()
+        database = NotionDataIngestor()
         await database.initialize()
         
         if database.chroma_db is None:
@@ -31,7 +32,7 @@ async def main():
         log_message(f"Error during initialization: {e}", "ERROR")
         return
 
-    response = await agent.get_answer("What the dog chases?", user_id="12345")
+    response = await agent.get_answer("Qual o preço de todos seus produtos?", user_id="12345")
     print(f"\033[92m{agent.model}: \033[0m{response.content}")
 
 if __name__ == "__main__":

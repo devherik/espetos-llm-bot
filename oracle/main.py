@@ -1,6 +1,7 @@
 import os
 
 from dotenv import load_dotenv
+from data_ingestor.notion_data_ingestor import NotionDataIngestor
 from utils.logger import log_message
 from data_ingestor.mariadb_data_ingestor import MariaDBDataIngestor
 from rag.rag_imp import RAGImp
@@ -63,7 +64,7 @@ async def startup_event(app: FastAPI) -> None:
             log_message("Telegram bot not initialized, cannot set webhook.", "ERROR")
 
         # Initialize the database
-        database = MariaDBDataIngestor()
+        database = NotionDataIngestor()
         await database.initialize()
         
         if database.chroma_db is None:
