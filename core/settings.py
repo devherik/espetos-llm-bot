@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from utils.tools.log_tool import log_message
 from pydantic_settings import BaseSettings
+from agno.embedder.openai import OpenAIEmbedder
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(BASE_DIR, '.env')
@@ -14,6 +15,7 @@ else:
     
 class EnvironmentSettings(BaseSettings):
     google_api_key: str = os.getenv("GOOGLE_API_KEY", "")
+    embedder: OpenAIEmbedder = OpenAIEmbedder()
     notion_token: str = os.getenv("NOTION_TOKEN", "")
     notion_database_id: str = os.getenv("NOTION_DATABASE_ID", "")
     ngrok_auth_token: str = os.getenv("NGROK_AUTH_TOKEN", "")
