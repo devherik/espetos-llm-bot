@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes, filters, MessageHandler
 
-from utils.logger import log_message
+from utils.tools.log_tool import log_message
 
 
 class TelegramMessenger:

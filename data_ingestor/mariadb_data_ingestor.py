@@ -7,7 +7,7 @@ from agno.embedder.google import GeminiEmbedder
 from agno.knowledge.document import DocumentKnowledgeBase
 from sqlalchemy import text, Connection, Engine, create_engine
 from typing import Optional, List
-from utils.logger import log_message
+from utils.tools.log_tool import log_message
 
 
 class MariaDBDataIngestor(DataIngestorInterface):

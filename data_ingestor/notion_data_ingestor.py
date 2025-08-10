@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from data_ingestor.data_ingestor import DataIngestorInterface
-from handlers.metadata_handler import metadata_handler
+from utils.handlers.metadata_handler import metadata_handler
 from agno.knowledge.document import DocumentKnowledgeBase
 from agno.vectordb.chroma import ChromaDb
 from agno.document.base import Document as AgnoDocument
@@ -10,7 +10,7 @@ from agno.embedder.google import GeminiEmbedder
 from typing import List, Optional
 from langchain_community.document_loaders import NotionDBLoader
 from langchain_core.documents.base import Document
-from utils.logger import log_message
+from utils.tools.log_tool import log_message
 
 class NotionDataIngestor(DataIngestorInterface):
     _instance: Optional[DataIngestorInterface] = None

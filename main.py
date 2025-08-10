@@ -5,7 +5,7 @@ from data_ingestor.notion_data_ingestor import NotionDataIngestor
 from rag.rag_imp import RAGImp
 from agent.gemini_agent_imp import GeminiAgentImp
 from pydantic import SecretStr
-from utils.logger import log_message
+from utils.tools.log_tool import log_message
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(BASE_DIR, '.env')

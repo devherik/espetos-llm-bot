@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from data_ingestor.notion_data_ingestor import NotionDataIngestor
-from utils.logger import log_message
+from utils.tools.log_tool import log_message
 from data_ingestor.mariadb_data_ingestor import MariaDBDataIngestor
 from rag.rag_imp import RAGImp
 from telegram import Update

@@ -9,7 +9,7 @@ from agno.memory.v2.memory import Memory
 from agno.storage.redis import RedisStorage
 from agno.knowledge.document import DocumentKnowledgeBase
 from typing import Optional
-from utils.logger import log_message
+from utils.tools.log_tool import log_message
 
 
 class GeminiAgentImp(AgentInterface):

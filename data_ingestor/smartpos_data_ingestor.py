@@ -1,6 +1,6 @@
 from data_ingestor.data_ingestor import DataIngestorInterface
 from typing import Optional
-from utils.logger import log_message
+from utils.tools.log_tool import log_message
 
 class SmartPOSDataIngestor(DataIngestorInterface):
     """Singleton class for SmartPOS data ingestion."""
