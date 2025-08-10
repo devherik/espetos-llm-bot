@@ -34,6 +34,6 @@ class EnvironmentSettings(BaseSettings):
         env_file = env_path
         env_file_encoding = 'utf-8'
         case_sensitive = True
-        extra = "forbid"
+        extra = "ignore"
         
 settings = EnvironmentSettings()

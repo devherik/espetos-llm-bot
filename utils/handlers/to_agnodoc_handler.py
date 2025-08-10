@@ -1,6 +1,6 @@
 from langchain_core.documents.base import Document
 from agno.document.base import Document as AgnoDocument
-from metadata_handler import data_handler
+from utils.handlers.metadata_handler import data_handler
 from utils.tools.log_tool import log_message
 
 async def to_agnodoc_helper(documents: list[Document]) -> list[AgnoDocument]:

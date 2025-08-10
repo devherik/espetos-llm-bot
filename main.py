@@ -1,8 +1,11 @@
-import httpx
 from core.settings import settings
+from routers.webhooks import webhooks
 from utils.tools.log_tool import log_message
 from services.knowledge_service import KnowledgeService
-from fastapi import FastAPI
+from services.telegram_service import TelegramService
+from services.user_request_service import UserRequestService
+from core.deps import get_knowledge_service, get_telegram_service, get_user_request_service
+from fastapi import FastAPI, Depends
 from fastapi.concurrency import asynccontextmanager
 from pyngrok import ngrok, conf
 from typing import Optional
@@ -21,6 +24,7 @@ async def lifespan(app: FastAPI):
         log_message("Application shutdown complete.", "INFO")
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(webhooks, dependencies=[Depends(get_knowledge_service), Depends(get_user_request_service)])
 
 async def startup_event(app: FastAPI) -> None:
     """
@@ -33,7 +37,8 @@ async def startup_event(app: FastAPI) -> None:
         await app.state.knowledge_service.process_knowledge()
         app.state.public_url = await start_ngrok_tunnel(port="8000", bind_tls=True)
         if not app.state.public_url: raise Exception("Failed to start ngrok tunnel.")
-        await setup_telegram_webhook_programmatically(app.state.public_url + "/telegram-webhook")
+        app.state.telegram_service = TelegramService()
+        await app.state.telegram_service.initialize(token=settings.telegram_bot_token)
     except Exception as e:
         log_message(f"Error during startup: {e}", "ERROR")
     log_message("Application startup complete.", "INFO")
@@ -65,22 +70,3 @@ async def start_ngrok_tunnel(port: str = "8000", bind_tls: bool = True) -> Optio
     except Exception as e:
         log_message(f"Failed to start ngrok tunnel: {e}", "ERROR")
         return None
-    
-async def setup_telegram_webhook_programmatically(webhook_url: str):
-    """Set up Telegram webhook programmatically during startup."""
-    try:
-        if not settings.telegram_bot_token:
-            log_message("No Telegram bot token configured", "WARNING")
-            return
-        telegram_api_url = f"https://api.telegram.org/bot{settings.telegram_bot_token}/setWebhook"
-        payload = {"url": webhook_url}
-        async with httpx.AsyncClient() as client:
-            response = await client.post(telegram_api_url, json=payload)
-            response.raise_for_status()
-            result = response.json()
-        if result.get("ok"):
-            log_message(f"Telegram webhook successfully set to: {webhook_url}", "INFO")
-        else:
-            log_message(f"Failed to set Telegram webhook: {result}", "ERROR")
-    except Exception as e:
-        log_message(f"Error setting up Telegram webhook: {e}", "ERROR")
