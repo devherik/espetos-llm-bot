@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  database:
+    image: pgvector/pgvector:pg17
+    container_name: postgres-espetos
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-postgres-espetos}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./docs/postgres/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres-espetos}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - default
+
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    networks:
+      - default
+
+volumes:
+  pg-data:
+
+networks:
+  default:
+    driver: bridge

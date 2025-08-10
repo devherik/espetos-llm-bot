@@ -22,4 +22,5 @@ dependencies = [
     "openai>=1.99.6",
     "pypdf>=5.9.0",
     "pgvector>=0.4.1",
+    "psycopg2-binary>=2.9.10",
 ]
