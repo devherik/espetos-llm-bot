@@ -50,8 +50,8 @@ async def telegram_webhook(
             log_message("Empty message text, ignoring", "WARNING")
             return ResponseModel(status="ok", message="Empty message ignored")
         # Process the message (this will handle the Oracle AI integration and response)
-        telegram_reply = await user_request_service.process_user_request(message.text, chat.id, "Telegram")
-        response = await telegram_service.send_message(chat.id, telegram_reply)
+        telegram_reply = await user_request_service.process_user_request(message.text, chat.id)
+        response = await telegram_service.send_message(chat.id, telegram_reply.content)
         log_message(f"Successfully processed update {update.update_id}", "INFO")
         return ResponseModel(status="ok", message="Message processed successfully", data={"response": response})
     except Exception as e:
