@@ -66,7 +66,7 @@ class UserRequestService:
                 db=RedisMemoryDb(
                     prefix="session_memory",
                     host=settings.postgres_host,
-                    port=6980,
+                    port=6380,
                     db=0,
                 ),
                 model=Gemini(
@@ -77,7 +77,7 @@ class UserRequestService:
             storage = RedisStorage(
                 prefix="celim_oracle",
                 host=settings.postgres_host,
-                port=6980,
+                port=6380,
                 db=0,
             )
             knowledge.aload(recreate=False, upsert=False)
