@@ -9,7 +9,7 @@ class TelegramService:
             cls._instance = super(TelegramService, cls).__new__(cls)
         return cls._instance
     
-    async def initialize(self, token: str):
+    async def initialize(self, token: str, webhook_url: str):
         """
         Initialize the Telegram service with the provided bot token.
         """
@@ -17,8 +17,8 @@ class TelegramService:
             if not token:
                 raise ValueError("Telegram bot token is required")
             self.bot_token = token
-            self.base_url = f"https://api.telegram.org/bot{self.bot_token}"
-            await self.setup_webhook()
+            self.telegram_api_endpoint = f"https://api.telegram.org/bot{self.bot_token}"
+            await self.setup_webhook(webhook_url)
             log_message("Telegram service initialized successfully", "INFO")
         except Exception as e:
             log_message(f"Error initializing Telegram service: {e}", "ERROR")
@@ -30,7 +30,7 @@ class TelegramService:
         """
         try:
             log_message(f"Sending message to chat {chat_id}: {text[:50]}...", "INFO")
-            url = f"{self.base_url}/sendMessage"
+            url = f"{self.telegram_api_endpoint}/sendMessage"
             payload = {
                 "chat_id": chat_id,
                 "text": text,
@@ -48,19 +48,19 @@ class TelegramService:
             raise e
 
 
-    async def setup_webhook(self):
+    async def setup_webhook(self, webhook_url: str):
         """Set up Telegram webhook programmatically during startup."""
         try:
             if not self.bot_token:
                 log_message("No Telegram bot token configured", "WARNING")
                 return
-            payload = {"url": self.base_url}
+            payload = {"url": webhook_url}
             async with httpx.AsyncClient() as client:
-                response = await client.post(f"{self.base_url}/setWebhook", json=payload)
+                response = await client.post(f"{self.telegram_api_endpoint}/setWebhook", json=payload)
                 response.raise_for_status()
                 result = response.json()
             if result.get("ok"):
-                log_message(f"Telegram webhook successfully set to: {self.base_url}", "INFO")
+                log_message(f"Telegram webhook successfully set to: {self.telegram_api_endpoint}", "INFO")
             else:
                 log_message(f"Failed to set Telegram webhook: {result}", "ERROR")
         except Exception as e:

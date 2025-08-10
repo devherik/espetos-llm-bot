@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, Request
 import httpx
+from fastapi import APIRouter, Depends, Request
 from core.deps import get_user_request_service, get_telegram_service
 from services.telegram_service import TelegramService
 from services.user_request_service import UserRequestService

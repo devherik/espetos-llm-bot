@@ -33,12 +33,16 @@ async def startup_event(app: FastAPI) -> None:
     log_message("Application is starting up...", "INFO")
     # Additional startup tasks can be added here
     try:
+        app.state.user_request_service = UserRequestService()
         app.state.knowledge_service = KnowledgeService()
         await app.state.knowledge_service.process_knowledge()
         app.state.public_url = await start_ngrok_tunnel(port="8000", bind_tls=True)
         if not app.state.public_url: raise Exception("Failed to start ngrok tunnel.")
         app.state.telegram_service = TelegramService()
-        await app.state.telegram_service.initialize(token=settings.telegram_bot_token)
+        await app.state.telegram_service.initialize(
+            token=settings.telegram_bot_token,
+            webhook_url=f"{app.state.public_url}/webhook/telegram"
+        )
     except Exception as e:
         log_message(f"Error during startup: {e}", "ERROR")
     log_message("Application startup complete.", "INFO")
