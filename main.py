@@ -45,7 +45,7 @@ async def shutdown_event(app: FastAPI) -> None:
     log_message("Application is shutting down...", "INFO")
     # Additional shutdown tasks can be added here
     try:
-        pass
+        await app.state.ngrok_data.disconnect(app.state.public_url)
     except Exception as e:
         log_message(f"Error during shutdown: {e}", "ERROR")
     log_message("Application shutdown complete.", "INFO")
@@ -59,9 +59,9 @@ async def start_ngrok_tunnel(port: str = "8000", bind_tls: bool = True) -> Optio
         if ngrok_auth_token:
             conf.get_default().auth_token = ngrok_auth_token
         
-        ngrok_data = ngrok.connect(port, bind_tls=bind_tls)
-        log_message(f"ngrok tunnel opened at: {ngrok_data.public_url}", "SUCCESS")
-        return ngrok_data.public_url
+        app.state.ngrok_data = ngrok.connect(port, bind_tls=bind_tls)
+        log_message(f"ngrok tunnel opened at: {app.state.ngrok_data.public_url}", "SUCCESS")
+        return app.state.ngrok_data.public_url
     except Exception as e:
         log_message(f"Failed to start ngrok tunnel: {e}", "ERROR")
         return None
