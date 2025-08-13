@@ -23,4 +23,5 @@ dependencies = [
     "pypdf>=5.9.0",
     "pgvector>=0.4.1",
     "psycopg2-binary>=2.9.10",
+    "chonkie>=1.1.2",
 ]
