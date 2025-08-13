@@ -24,7 +24,11 @@ async def lifespan(app: FastAPI):
         log_message("Application shutdown complete.", "INFO")
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(webhooks, dependencies=[Depends(get_knowledge_service), Depends(get_user_request_service)])
+app.include_router(webhooks, dependencies=[
+    Depends(get_knowledge_service),
+    Depends(get_user_request_service),
+    Depends(get_telegram_service)
+])
 
 async def startup_event(app: FastAPI) -> None:
     """

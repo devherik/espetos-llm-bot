@@ -1,12 +1,17 @@
 import httpx
+import threading
+from typing import Optional
 from utils.tools.log_tool import log_message
 
 class TelegramService:
-    _instance = None
+    _instance: Optional["TelegramService"] = None
+    _lock: threading.Lock = threading.Lock()
 
     def __new__(cls):
         if not cls._instance:
-            cls._instance = super(TelegramService, cls).__new__(cls)
+            with cls._lock:
+                if not cls._instance:
+                    cls._instance = super().__new__(cls)
         return cls._instance
     
     async def initialize(self, token: str, webhook_url: str):
