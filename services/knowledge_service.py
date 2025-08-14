@@ -3,6 +3,7 @@ from agno.knowledge.pdf import PDFKnowledgeBase
 from agno.knowledge.document import DocumentKnowledgeBase
 from agno.knowledge.combined import CombinedKnowledgeBase
 from agno.vectordb.pgvector import PgVector, SearchType
+from agno.document.chunking.agentic import AgenticChunking
 from typing import Optional
 from utils.tools.log_tool import log_message
 from utils.handlers.to_agnodoc_handler import to_agnodoc_helper
@@ -29,13 +30,22 @@ class KnowledgeService:
             self.document_knowledge = await self.get_notion_knowledge()
             self.combined_knowledge = CombinedKnowledgeBase(
                 sources=[self.pdf_knowledge, self.document_knowledge],
+                chunking_strategy=AgenticChunking(),
                 vector_db=PgVector(
                     table_name="combined_knowledge",
                     db_url=settings.db_url,
-                    embedder=settings.embedder,
-                    search_type=SearchType.hybrid
+                    embedder=settings.embedder
                 )
             )
+            # Try to load the combined knowledge base
+            try:
+                await self.combined_knowledge.aload(recreate=False, upsert=True, skip_existing=True)
+            except TypeError as te:
+                # If aload is an async generator, try synchronous load as fallback
+                if "async_generator" in str(te):
+                    self.combined_knowledge.load(recreate=False, upsert=True, skip_existing=True)
+                else:
+                    raise
         except Exception as e:
             log_message(f"Error initializing knowledge bases: {e}", "ERROR")
     
@@ -46,14 +56,23 @@ class KnowledgeService:
         knowledge_base: PDFKnowledgeBase = PDFKnowledgeBase()
         try:
             knowledge_base = PDFKnowledgeBase(
-                path="./data/new",
+                path="docs/pdfs",
+                chunking_strategy=AgenticChunking(),
                 vector_db=PgVector(
                     table_name="pdf_knowledge",
                     db_url=settings.db_url,
                     embedder=settings.embedder
                 )
             )
-            await knowledge_base.aload(recreate=False, upsert=True)
+            # Try to load the PDF knowledge base
+            try:
+                await knowledge_base.aload(recreate=False, upsert=False, skip_existing=True)
+            except TypeError as te:
+                # If aload is an async generator, try synchronous load as fallback
+                if "async_generator" in str(te):
+                    knowledge_base.load(recreate=False, upsert=False, skip_existing=True)
+                else:
+                    raise
         except Exception as e:
             log_message(f"Error loading PDF knowledge base: {e}", "ERROR")
             return PDFKnowledgeBase()
@@ -79,14 +98,22 @@ class KnowledgeService:
             documents = await to_agnodoc_helper(documents)
             knowledge_base = DocumentKnowledgeBase(
                 documents=documents,
+                chunking_strategy=AgenticChunking(),
                 vector_db=PgVector(
                     table_name="notion_knowledge",
                     db_url=settings.db_url,
-                    embedder=settings.embedder,
-                    search_type=SearchType.hybrid
+                    embedder=settings.embedder
                 )
             )
-            await knowledge_base.aload(recreate=False, upsert=True)
+            # Try to load the Notion knowledge base
+            try:
+                await knowledge_base.aload(recreate=False, upsert=True, skip_existing=True)
+            except TypeError as te:
+                # If aload is an async generator, try synchronous load as fallback
+                if "async_generator" in str(te):
+                    knowledge_base.load(recreate=False, upsert=True, skip_existing=True)
+                else:
+                    raise
         except Exception as e:
             log_message(f"Error loading Notion knowledge base: {e}", "ERROR")
             return DocumentKnowledgeBase()

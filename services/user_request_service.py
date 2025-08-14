@@ -39,7 +39,7 @@ class UserRequestService:
         Process user requests and generate appropriate responses.
         """
         try:
-            agent = await self.get_allmight_agent(self.knowledge_service.combined_knowledge)
+            agent = await self.get_classic_agent()
             response = agent.run(user_input, chat_id=chat_id)
             if not response.content:
                 log_message("No content returned from agent, returning default response", "WARNING")
@@ -50,7 +50,7 @@ class UserRequestService:
             log_message(f"Error getting allmight agent: {e}", "ERROR")
             return RunResponse(answer=f"Error processing request: {e}", content="")
 
-    async def get_allmight_agent(self, knowledge) -> Agent:
+    async def get_classic_agent(self) -> Agent:
         """
         Initializes and returns a classic agent with Gemini model.
         """
@@ -80,13 +80,13 @@ class UserRequestService:
                 port=6380,
                 db=0,
             )
-            knowledge.aload(recreate=False, upsert=False)
+            # await self.knowledge_service.combined_knowledge.aload(recreate=False, upsert=False)
             agent = Agent(
                 model=Gemini(
                     id= "gemini-2.5-flash",
                     api_key=settings.google_api_key
                 ),
-                knowledge=knowledge,
+                knowledge=self.knowledge_service.combined_knowledge,
                 search_knowledge=True,
                 show_tool_calls=False,
                 add_history_to_messages=True,
