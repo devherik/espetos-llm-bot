@@ -446,7 +446,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 **Herik Colares** - *AI/ML Engineer & Full-Stack Developer*
 
 - 🌐 **GitHub**: [github.com/devherik](https://github.com/devherik)
-- 💼 **LinkedIn**: [linkedin.com/in/herikcolares](https://linkedin.com/in/herik-colares)
+- 💼 **LinkedIn**: [linkedin.com/in/herik-colares](https://linkedin.com/in/herik-colares)
 - 📧 **Email**: dev.herik@gmail.com
 - 🔗 **Portfolio**: [herikcolares.dev](https://herikcolares.dev)
 
