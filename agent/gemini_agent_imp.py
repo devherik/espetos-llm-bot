@@ -1,4 +1,3 @@
-import os
 from agent.agent import AgentInterface
 from agent.instruction_template import agent_instruction_template
 from pydantic import SecretStr

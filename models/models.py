@@ -1,11 +1,11 @@
 # models.py
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Literal, Optional, Dict, Any
 
 class IngestRequest(BaseModel):
     collection: str
     source_type: Literal["local", "notion"]
-    path: Optional[str] = None # e.g., 'data/project_a' for local
+    path: Optional[str] = None  # e.g., 'data/project_a' for local
 
 class QueryRequest(BaseModel):
     query: str
@@ -34,7 +34,7 @@ class TelegramChat(BaseModel):
 
 class TelegramMessage(BaseModel):
     message_id: int
-    from_: Optional[TelegramUser] = None
+    from_: Optional[TelegramUser] = Field(None, alias="from")
     date: int
     chat: TelegramChat
     text: Optional[str] = None
@@ -42,9 +42,10 @@ class TelegramMessage(BaseModel):
     document: Optional[Dict[str, Any]] = None
     voice: Optional[Dict[str, Any]] = None
     
-    class Config:
-        fields = {"from_": "from"}
-        extra = "allow"  # Allow extra fields
+    model_config = ConfigDict(
+        populate_by_name=True,
+        extra="allow",
+    )
 
 class TelegramUpdate(BaseModel):
     update_id: int
@@ -53,5 +54,6 @@ class TelegramUpdate(BaseModel):
     channel_post: Optional[TelegramMessage] = None
     edited_channel_post: Optional[TelegramMessage] = None
     
-    class Config:
-        extra = "allow"  # Allow extra fields
+    model_config = ConfigDict(
+        extra="allow",
+    )

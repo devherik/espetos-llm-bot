@@ -1,6 +1,5 @@
 import asyncio
 import os
-from data_ingestor.mariadb_data_ingestor import MariaDBDataIngestor
 from data_ingestor.notion_data_ingestor import NotionDataIngestor
 from rag.rag_imp import RAGImp
 from agent.gemini_agent_imp import GeminiAgentImp
