@@ -11,6 +11,7 @@ from fastapi.concurrency import asynccontextmanager
 from pyngrok import ngrok, conf
 from typing import Optional
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
@@ -32,6 +33,7 @@ app.include_router(webhooks, dependencies=[
 ])
 app.include_router(health_router)
 
+
 async def startup_event(app: FastAPI) -> None:
     """
     Startup event handler to initialize resources.
@@ -44,7 +46,8 @@ async def startup_event(app: FastAPI) -> None:
         app.state.user_request_service = UserRequestService()
         await app.state.user_request_service.initialize(app.state.knowledge_service)
         app.state.public_url = await start_ngrok_tunnel(port="8000", bind_tls=True)
-        if not app.state.public_url: raise Exception("Failed to start ngrok tunnel.")
+        if not app.state.public_url:
+            raise Exception("Failed to start ngrok tunnel.")
         app.state.telegram_service = TelegramService()
         await app.state.telegram_service.initialize(
             token=settings.telegram_bot_token,
@@ -53,6 +56,7 @@ async def startup_event(app: FastAPI) -> None:
     except Exception as e:
         log_message(f"Error during startup: {e}", "ERROR")
     log_message("Application startup complete.", "INFO")
+
 
 async def shutdown_event(app: FastAPI) -> None:
     """
@@ -68,6 +72,7 @@ async def shutdown_event(app: FastAPI) -> None:
         log_message(f"Error during ngrok disconnection: {e}", "ERROR")
     log_message("Application shutdown complete.", "INFO")
 
+
 async def start_ngrok_tunnel(port: str = "8000", bind_tls: bool = True) -> Optional[str]:
     """
     Start an ngrok tunnel to expose the application.
@@ -79,9 +84,10 @@ async def start_ngrok_tunnel(port: str = "8000", bind_tls: bool = True) -> Optio
         ngrok_auth_token = settings.ngrok_auth_token
         if ngrok_auth_token:
             conf.get_default().auth_token = ngrok_auth_token
-        
+
         app.state.ngrok_data = ngrok.connect(port, bind_tls=bind_tls)
-        log_message(f"ngrok tunnel opened at: {app.state.ngrok_data.public_url}", "SUCCESS")
+        log_message(
+            f"ngrok tunnel opened at: {app.state.ngrok_data.public_url}", "SUCCESS")
         return app.state.ngrok_data.public_url
     except Exception as e:
         log_message(f"Failed to start ngrok tunnel: {e}", "ERROR")

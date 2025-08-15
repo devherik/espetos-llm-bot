@@ -2,7 +2,7 @@ import threading
 from agno.knowledge.pdf import PDFKnowledgeBase
 from agno.knowledge.document import DocumentKnowledgeBase
 from agno.knowledge.combined import CombinedKnowledgeBase
-from agno.vectordb.pgvector import PgVector, SearchType
+from agno.vectordb.pgvector import PgVector
 from agno.document.chunking.agentic import AgenticChunking
 from typing import Optional
 from utils.tools.log_tool import log_message
