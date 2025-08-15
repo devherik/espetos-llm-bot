@@ -29,6 +29,7 @@ class EnvironmentSettings(BaseSettings):
     db_url: str = f"postgresql://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}"
     smart_pos_api_key: str = os.getenv("SMART_POS_API_KEY", "")
     env_path: str = env_path
+    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
     
     class Config:
         env_file = env_path

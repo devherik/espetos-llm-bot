@@ -1,5 +1,6 @@
 from core.settings import settings
 from routers.webhooks import webhooks
+from routers.health import router as health_router
 from utils.tools.log_tool import log_message
 from services.knowledge_service import KnowledgeService
 from services.telegram_service import TelegramService
@@ -29,6 +30,7 @@ app.include_router(webhooks, dependencies=[
     Depends(get_user_request_service),
     Depends(get_telegram_service)
 ])
+app.include_router(health_router)
 
 async def startup_event(app: FastAPI) -> None:
     """
@@ -59,15 +61,20 @@ async def shutdown_event(app: FastAPI) -> None:
     log_message("Application is shutting down...", "INFO")
     # Additional shutdown tasks can be added here
     try:
-        await app.state.ngrok_data.disconnect(app.state.public_url)
+        if hasattr(app.state, 'ngrok_data') and app.state.ngrok_data:
+            ngrok.disconnect(app.state.ngrok_data.public_url)
+            log_message("ngrok tunnel disconnected.", "INFO")
     except Exception as e:
-        log_message(f"Error during shutdown: {e}", "ERROR")
+        log_message(f"Error during ngrok disconnection: {e}", "ERROR")
     log_message("Application shutdown complete.", "INFO")
 
 async def start_ngrok_tunnel(port: str = "8000", bind_tls: bool = True) -> Optional[str]:
     """
     Start an ngrok tunnel to expose the application.
     """
+    if settings.ENVIRONMENT == "production":
+        log_message("Skipping ngrok tunnel in production environment.", "INFO")
+        return None
     try:
         ngrok_auth_token = settings.ngrok_auth_token
         if ngrok_auth_token:
