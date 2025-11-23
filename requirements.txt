@@ -1,4 +1,4 @@
-agno==1.7.4
+agno==2.3.2
 annotated-types==0.7.0
 anyio==4.9.0
 aptdaemon==2.0.2
