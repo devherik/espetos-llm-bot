@@ -30,6 +30,22 @@ class EnvironmentSettings(BaseSettings):
     smart_pos_api_key: str = os.getenv("SMART_POS_API_KEY", "")
     env_path: str = env_path
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
+
+    @property
+    def is_development(self) -> bool:
+        return self.ENVIRONMENT == "development"
+
+    @property
+    def is_production(self) -> bool:
+        return self.ENVIRONMENT == "production"
+    
+    @property
+    def get_db_url(self) -> str:
+        return self.db_url
+    
+    @property
+    def get_smart_pos_api_key(self) -> str:
+        return self.smart_pos_api_key
     
     class Config:
         env_file = env_path
